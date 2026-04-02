@@ -1,31 +1,17 @@
 package com.codefromscratch.employee;
 
-public class Employee {
-    protected String id;
-    protected String name;
-    protected String service;
-    protected Rule rule=Rule.APPLICANT;
+import java.util.UUID;
 
-    public Employee(String id, String name, String service, Rule rule) {
-        this.id = id;
+public abstract class Employee {
+    protected String id;
+    protected final String name;
+    protected final Service service;
+
+    public Employee(String name, Service service) {
+        this.id = UUID.randomUUID().toString();
         this.name = name;
         this.service = service;
-        this.rule = rule;
     }
 
-    public Employee(String id, String name, String service) {
-        this(id, name, service, Rule.APPLICANT);
-    }
-
-    public void findTicket(){
-
-    }
-
-    public void listAllTickets(){
-
-    }
-
-    public void ticketFilter(){
-
-    }
+    public abstract String listAllTickets();
 }

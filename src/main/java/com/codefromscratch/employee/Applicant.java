@@ -2,8 +2,8 @@ package com.codefromscratch.employee;
 
 public class Applicant extends Employee {
 
-    public Applicant(String id, String name, String service) {
-        super(id, name, service, Rule.APPLICANT);
+    public Applicant(String name, Service service) {
+        super(name, service);
     }
 
     public void createTicket(){
@@ -15,7 +15,8 @@ public class Applicant extends Employee {
     public void findTicket(){
     }
 
-    public void listAllTickets(){
+    public String listAllTickets(){
+        return "";
     }
 
     public void ticketFilter(){
