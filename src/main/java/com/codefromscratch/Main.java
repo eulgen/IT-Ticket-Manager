@@ -17,7 +17,6 @@ public class Main {
         admin.createTicket("Imprimante defaillante","L'imprimante ne fonctionne plus",Priority.HIGH,Service.HR,"John Doe",null);
         admin.createTicket("Ordinateur defaillant","L'ordinateur ne fonctionne plus",Priority.MEDIUM,Service.ACCOUNTING,"Jane Doe","Franck Gerard");
         admin.createTicket("Probleme de connexion","Impossible de se connecter au serveur",Priority.LOW,Service.LOGISTICS,"Alice Smith","Martin Luck");
-
         System.out.println(admin.listAllTickets());
     }
 }
