@@ -5,7 +5,6 @@ public class Technician extends Employee {
         super(name, Service.SUPPORT);
     }
 
-    @Override
     public String listAllTickets() {
         return "";
     }

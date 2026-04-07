@@ -2,7 +2,7 @@ package com.codefromscratch.employee;
 
 import java.util.UUID;
 
-public abstract class Employee {
+public class Employee {
     protected String id;
     protected final String name;
     protected final Service service;
@@ -12,6 +12,4 @@ public abstract class Employee {
         this.name = name;
         this.service = service;
     }
-
-    public abstract String listAllTickets();
 }

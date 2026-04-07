@@ -19,8 +19,8 @@ public class Ticket {
     private final Service service;
     private final String name_applicant;
     private String name_technician = "NOT ASSIGN";
-    private final LocalDateTime created_at;
-    private final LocalDateTime updated_at;
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
 
     public Ticket(String title, String description, Status status, Priority priority, Service service, String name_applicant, String name_technician) {
         this.id = generateId();
@@ -40,6 +40,19 @@ public class Ticket {
         this.name_technician = name_technician != null ? name_technician : "NOT ASSIGN";
         this.created_at = LocalDateTime.now();
         this.updated_at = LocalDateTime.now();
+    }
+
+    public Ticket(String id,String title, String description, Status status, Priority priority, Service service, String name_applicant,String name_technician,LocalDateTime created_at, LocalDateTime updated_at) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.priority = priority;
+        this.service = service;
+        this.name_applicant = name_applicant;
+        this.name_technician = name_technician;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
     }
 
     public Ticket(String title, String description, Status status, Priority priority, Service service, String name_applicant) {
