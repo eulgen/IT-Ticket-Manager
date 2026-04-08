@@ -1,5 +1,6 @@
 package com.codefromscratch.ticket;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface TicketRepo {
@@ -19,5 +20,6 @@ public interface TicketRepo {
     void updateTicket(String id, Priority priority);
     void updateTicket(String id, String technician);
     void updateTicket(String id, Status status);
+//    void updateTicket(String id, String applicant);
 
 }
