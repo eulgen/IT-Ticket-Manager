@@ -1,6 +1,5 @@
 package com.codefromscratch.ticket;
 
-import com.codefromscratch.employee.Service;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvValidationException;
@@ -10,31 +9,46 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 public class CSVTicketRepo implements TicketRepo {
 
     private static final String TICKET_FILE = "tickets.csv";
 
-    public CSVTicketRepo() {}
+    public final Set<Ticket> mytickets;
+
+    public CSVTicketRepo() {this.mytickets = new HashSet<>();}
 
     public boolean fileExist(){
         return new File(TICKET_FILE).exists();
     }
 
+    public void saveData(Ticket ticket) {
+        Set<Ticket> tickets = loadDatas();
+        tickets.add(ticket);
+        deleteDatas();
+        saveDatas(tickets);
+    }
+
     public void saveDatas(Set<Ticket> tickets) {
-        if(!fileExist()){
-            return;
+        File file = new File(TICKET_FILE);
+        try{
+            if(!fileExist()){
+                file.createNewFile();
+                return;
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
         }
         try (CSVWriter writer = new CSVWriter(new FileWriter(TICKET_FILE))) {
+
             writer.writeNext(new String[]{"id",
                     "title",
                     "description",
-                    "priority",
                     "status",
+                    "priority",
                     "service",
                     "name_applicant",
                     "name_technician",
@@ -44,8 +58,8 @@ public class CSVTicketRepo implements TicketRepo {
                     .map(ticket -> new String[]{ticket.getId(),
                             ticket.getTitle(),
                             ticket.getDescription(),
-                            ticket.getPriority().toString(),
                             ticket.getStatus().toString(),
+                            ticket.getPriority().toString(),
                             ticket.getService().toString(),
                             ticket.getName_applicant(),
                             ticket.getName_technician(),
@@ -55,6 +69,10 @@ public class CSVTicketRepo implements TicketRepo {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void saveDatas(){
+        saveDatas(mytickets);
     }
 
     public Set<Ticket> loadDatas() {
@@ -68,7 +86,6 @@ public class CSVTicketRepo implements TicketRepo {
 
         try (CSVReader reader = new CSVReader(new FileReader(TICKET_FILE))) {
             String[] nextLine;
-            // Lire l'en-tête pour le sauter
             reader.readNext();
 
             while ((nextLine = reader.readNext()) != null) {
@@ -76,8 +93,8 @@ public class CSVTicketRepo implements TicketRepo {
                     String id = nextLine[0];
                     String title = nextLine[1];
                     String description = nextLine[2];
-                    Priority priority = Priority.valueOf(nextLine[3]);
-                    Status status = Status.valueOf(nextLine[4]);
+                    Status status = Status.valueOf(nextLine[3]);
+                    Priority priority = Priority.valueOf(nextLine[4]);
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
                     String name_technician = nextLine[7];
@@ -88,7 +105,6 @@ public class CSVTicketRepo implements TicketRepo {
                     tickets.add(ticket);
                 }
             }
-            System.out.println("Datas loaded on :  " + TICKET_FILE);
             return tickets;
         } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
@@ -139,11 +155,11 @@ public class CSVTicketRepo implements TicketRepo {
             String[] nextLine;
             reader.readNext();
             while((nextLine = reader.readNext()) != null){
-                if(nextLine[1].equals(title)){
+                if(nextLine[1].contains(title.toLowerCase())){
                     String id = nextLine[0];
                     String description = nextLine[2];
-                    Priority priority = Priority.valueOf(nextLine[3]);
-                    Status status = Status.valueOf(nextLine[4]);
+                    Status status = Status.valueOf(nextLine[3]);
+                    Priority priority = Priority.valueOf(nextLine[4]);
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
                     String name_technician = nextLine[7];
@@ -170,13 +186,14 @@ public class CSVTicketRepo implements TicketRepo {
                     String id = nextLine[0];
                     String title = nextLine[1];
                     String description = nextLine[2];
+                    Status status_ticket = Status.valueOf(nextLine[3]);
                     Priority priority = Priority.valueOf(nextLine[4]);
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
                     String name_technician = nextLine[7];
                     LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
                     LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
-                    tickets.add(new Ticket(id, title, description, Status.valueOf(status), priority, service, name_applicant, name_technician, created_at,updated_at));
+                    tickets.add(new Ticket(id, title, description, status_ticket, priority, service, name_applicant, name_technician, created_at,updated_at));
                 }
             }
         }catch (IOException | CsvValidationException e){
@@ -247,7 +264,7 @@ public class CSVTicketRepo implements TicketRepo {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                if(nextLine[7].contains(technician)){
+                if(nextLine[7].contains(technician.toLowerCase())){
                     String id = nextLine[0];
                     String title = nextLine[1];
                     String description = nextLine[2];
@@ -255,9 +272,10 @@ public class CSVTicketRepo implements TicketRepo {
                     Priority priority = Priority.valueOf(nextLine[4]);
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
+                    String technician_ticket = nextLine[7];
                     LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
                     LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
-                    tickets.add(new Ticket(id, title, description, status, priority, service, name_applicant, technician, created_at,updated_at));
+                    tickets.add(new Ticket(id, title, description, status, priority, service, name_applicant, technician_ticket, created_at,updated_at));
                 }
             }
         }catch (IOException | CsvValidationException e){
@@ -274,17 +292,18 @@ public class CSVTicketRepo implements TicketRepo {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                if (nextLine[6].contains(applicant)) {
+                if (nextLine[6].contains(applicant.toLowerCase())) {
                     String id = nextLine[0];
                     String title = nextLine[1];
                     String description = nextLine[2];
                     Status status = Status.valueOf(nextLine[3]);
                     Priority priority = Priority.valueOf(nextLine[4]);
                     Service service = Service.valueOf(nextLine[5]);
+                    String applicant_ticket = nextLine[6];
                     String name_technician = nextLine[7];
                     LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
                     LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
-                    tickets.add(new Ticket(id, title, description, status, priority, service, applicant, name_technician, created_at,updated_at));
+                    tickets.add(new Ticket(id, title, description, status, priority, service, applicant_ticket, name_technician, created_at,updated_at));
                 }
             }
         }catch (IOException | CsvValidationException e){
@@ -301,8 +320,9 @@ public class CSVTicketRepo implements TicketRepo {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                if(nextLine[1].contains(name)){
+                if(nextLine[1].contains(name.toLowerCase())){
                     String id = nextLine[0];
+                    String title = nextLine[1];
                     String description = nextLine[2];
                     Status status = Status.valueOf(nextLine[3]);
                     Priority priority = Priority.valueOf(nextLine[4]);
@@ -311,7 +331,7 @@ public class CSVTicketRepo implements TicketRepo {
                     String name_technician = nextLine[7];
                     LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
                     LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
-                    tickets.add(new Ticket(id, name, description, status, priority, service, name_applicant, name_technician, created_at,updated_at));
+                    tickets.add(new Ticket(id, title, description, status, priority, service, name_applicant, name_technician, created_at,updated_at));
                 }
             }
         }catch (IOException | CsvValidationException e){
@@ -331,39 +351,39 @@ public class CSVTicketRepo implements TicketRepo {
     }
 
     @Override
-    public void updateTicket(String id, Priority priority) {
+    public void updateTicketByPriority(String id, String priority) {
         Set<Ticket> tickets = loadDatas();
         tickets.stream()
                 .filter(ticket -> ticket.getId().equals(id))
                 .findFirst()
                 .ifPresent(ticket -> {
-                    ticket.setPriority(priority);
+                    ticket.setPriority(Priority.valueOf(priority));
                     ticket.setUpdated_at(LocalDateTime.now());
                 });
         saveDatas(tickets);
     }
 
     @Override
-    public void updateTicket(String id, String technician) {
+    public void updateTicketByTechnician(String id, String technician) {
         Set<Ticket> tickets = loadDatas();
         tickets.stream()
                 .filter(ticket -> ticket.getId().equals(id))
                 .findFirst()
                 .ifPresent(ticket -> {
-                    ticket.assignTechnician(technician);
+                    ticket.assignTechnician(technician.toLowerCase());
                     ticket.setUpdated_at(LocalDateTime.now());
                 });
         saveDatas(tickets);
     }
 
     @Override
-    public void updateTicket(String id, Status status) {
+    public void updateTicketByStatus(String id, String status) {
         Set<Ticket> tickets = loadDatas();
         tickets.stream()
                 .filter(ticket -> ticket.getId().equals(id))
                 .findFirst()
                 .ifPresent(ticket -> {
-                    ticket.setStatus(status);
+                    ticket.changeStatus(Status.valueOf(status));
                     ticket.setUpdated_at(LocalDateTime.now());
                 });
         saveDatas(tickets);

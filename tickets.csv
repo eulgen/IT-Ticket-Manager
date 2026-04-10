@@ -1,0 +1,4 @@
+"id","title","description","status","priority","service","name_applicant","name_technician","created_at","updated_at"
+"Tick-EG-d244c9","pc hors jeu","le pc ne fonctionne plus","OPEN","HIGH","MANAGEMENT","lolita","john doe","2026-04-10T04:47:54.835070600","2026-04-10T04:47:54.835070600"
+"Tick-EG-437fe2","imprimante ne fonctionne pas","depuis lundi dernier l'imprimante ne fonctionne pas","OPEN","MEDIUM","LOGISTICS","pamela","john doe","2026-04-09T19:57:30.140139800","2026-04-09T19:57:30.140139800"
+"Tick-EG-b31b86","problème réseau","le réseau ne fonctionne pas depuis hier","IN_PROGRESS","HIGH","MANAGEMENT","alicia","john doe","2026-04-09T19:57:30.165156","2026-04-09T20:50:42.915062300"

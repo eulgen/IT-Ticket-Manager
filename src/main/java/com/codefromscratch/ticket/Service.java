@@ -1,4 +1,4 @@
-package com.codefromscratch.employee;
+package com.codefromscratch.ticket;
 
 public enum Service {
     HR ,

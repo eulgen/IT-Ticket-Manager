@@ -1,8 +1,6 @@
 package com.codefromscratch;
 
-import com.codefromscratch.employee.Administrator;
 import com.codefromscratch.ticket.*;
-import com.codefromscratch.employee.Service;
 
 import java.util.Set;
 
@@ -10,8 +8,13 @@ import java.util.Set;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        TicketManager ticketManager = new TicketManager();
-        ticketManager.createTicket("Test", "Test", Priority.LOW, Service.SUPPORT, "Test", "Test");
-        System.out.println(ticketManager.listAllTickets());
+        TicketRepo ticketRepo = new CSVTicketRepo();
+        TicketManager ticketManager = new TicketManager(ticketRepo);
+//        ticketManager.createTicket("PC hors jeu", "Le PC ne fonctionne plus", Priority.HIGH, Service.MANAGEMENT, "Lolita", "John Doe");
+//        ticketManager.createTicket("Imprimante ne fonctionne pas","Depuis lundi dernier l'imprimante ne fonctionne pas", Priority.MEDIUM, Service.LOGISTICS,"Pamela","John Doe");
+//        ticketManager.createTicket("Problème réseau","Le réseau ne fonctionne pas depuis hier", Priority.HIGH, Service.MANAGEMENT,"Alicia","John Doe");
+//          Set<Ticket> tickets = ticketManager.filterTicketByService("MANAGEMENT");
+//        System.out.println(tickets.toString());
+        ticketManager.deleteTicket("Tick-EG-b020d4");
     }
 }

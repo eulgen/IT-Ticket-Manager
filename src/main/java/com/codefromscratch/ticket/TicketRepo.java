@@ -5,7 +5,9 @@ import java.util.Set;
 
 public interface TicketRepo {
 
+    void saveData(Ticket ticket);
     void saveDatas(Set<Ticket> tickets);
+    void saveDatas();
     Set<Ticket> loadDatas();
     void deleteDatas();
     Ticket findTicketById(String id);
@@ -17,9 +19,8 @@ public interface TicketRepo {
     Set<Ticket> filterTicketByApplicant(String applicant);
     Set<Ticket> filterTicketbyTitle(String name);
     void deleteTicket(String ticketId);
-    void updateTicket(String id, Priority priority);
-    void updateTicket(String id, String technician);
-    void updateTicket(String id, Status status);
-//    void updateTicket(String id, String applicant);
+    void updateTicketByPriority(String id, String priority);
+    void updateTicketByTechnician(String id, String technician);
+    void updateTicketByStatus(String id, String status);
 
 }

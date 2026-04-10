@@ -1,11 +1,11 @@
 package com.codefromscratch.ticket;
 
-import com.codefromscratch.employee.Service;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Getter
@@ -57,6 +57,23 @@ public class Ticket {
 
     public Ticket(String title, String description, Status status, Priority priority, Service service, String name_applicant) {
         this(title, description, status, priority, service, name_applicant, "NOT ASSIGN");
+    }
+
+    public String toString(){
+        return "\n-----\nTicket ID: "+this.id+"\nTitle: "+this.title+"\nDescription: "+this.description+
+                "\nStatus: "+this.status+"\nPriority: "+this.priority+"\nService: "+this.service+
+                "\nName Applicant: "+this.name_applicant+"\nName Technician: "+this.name_technician+
+                "\nCreated At: "+this.created_at+"\nUpdated At: "+this.updated_at;
+    }
+
+    String getFormattedCreatedAt(LocalDateTime format_date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm");
+        return format_date.format(formatter);
+    }
+
+    public LocalDateTime parseStringToDate(String dateStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm");
+        return LocalDateTime.parse(dateStr, formatter);
     }
 
     public String generateId() {

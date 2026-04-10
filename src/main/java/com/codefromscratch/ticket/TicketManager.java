@@ -1,54 +1,69 @@
 package com.codefromscratch.ticket;
 
-import com.codefromscratch.employee.Service;
 import lombok.Getter;
-import java.time.LocalDateTime;
-import java.util.HashSet;
+
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
 public class TicketManager {
 
-    private final Set<Ticket> tickets;
+    private final TicketRepo tickets;
 
     public TicketManager(){
-        this.tickets = new HashSet<>();
+        this.tickets = new TempTicketRepo();
     }
 
-    public Ticket createTicket(String title, String description, Priority priority, Service service, String name_applicant, String name_technician){
-        Ticket ticket =  new Ticket(title, description, Status.OPEN,priority, service, name_applicant, name_technician);
-        tickets.add(ticket);
-        return ticket;
+    public TicketManager(TicketRepo ticketsRepo){this.tickets = ticketsRepo;}
+
+    public void createTicket(String title, String description, Priority priority, Service service, String name_applicant, String name_technician){
+        Ticket ticket =  new Ticket(title.toLowerCase(), description.toLowerCase(), Status.OPEN,priority, service, name_applicant.toLowerCase(), name_technician.toLowerCase());
+        tickets.saveData(ticket);
     }
 
-    public void updateTicket(String id,Priority priority) {
-        Ticket findedTicket = findTicketById(id);
-        findedTicket.setPriority(priority);
-        findedTicket.setUpdated_at(LocalDateTime.now());
-        deleteTicket(id);
-        tickets.add(findedTicket);
+    public void saveData(Ticket ticket){
+        tickets.saveData(ticket);
     }
 
-    public void updateTicket(String id, String technician){
-        Ticket findedTicket = findTicketById(id);
-        findedTicket.setName_technician(technician);
-        findedTicket.setUpdated_at(LocalDateTime.now());
-        deleteTicket(id);
-        tickets.add(findedTicket);
+    public void saveDatas(Set<Ticket> mytickets){
+        tickets.saveDatas(mytickets);
     }
 
-    public Set<Ticket> deleteTicket(String ticketId){
-        Ticket findedTicket = findTicketById(ticketId);
-        tickets.remove(findedTicket);
-        return tickets;
+    public Set<Ticket> loadDatas(){
+        return tickets.loadDatas();
     }
 
-    public void changeStatus(){
+    public void deleteAll(){
+        tickets.deleteDatas();
+    }
+
+    public Ticket findTicketById(String id){
+        return tickets.findTicketById(id);
+    }
+
+    public Ticket findTicketByTitle(String title){
+        return tickets.findTicketByTitle(title);
+    }
+
+    public void updateTicketByPriority(String id,String priority) {
+        tickets.updateTicketByPriority(id,priority);
+    }
+
+    public void updateTicketByTechnician(String id, String technician){
+        tickets.updateTicketByTechnician(id,technician);
+    }
+
+    public void updateTicketByStatus(String id, String status){
+        tickets.updateTicketByStatus(id,status);
+    }
+
+    public void deleteTicket(String ticketId){
+        tickets.deleteTicket(ticketId);
     }
 
     public String listAllTickets(){
-        return tickets.stream()
+        Set<Ticket> mytickets = tickets.loadDatas();
+        return mytickets.stream()
                 .map(ticket ->ticket.getId() + " - " + ticket.getTitle() + " - " + ticket.getDescription() + " - "
                         + ticket.getStatus() + " - " + ticket.getPriority() + " - " + ticket.getService()
                         + " - " + ticket.getName_applicant() + " - " + ticket.getName_technician()
@@ -58,53 +73,32 @@ public class TicketManager {
     }
 
     public Set<Ticket> filterTicketbyTitle(String name){
-        return tickets.stream()
-                .filter(ticket->ticket.getTitle().contains(name))
-                .collect(Collectors.toSet());
+        return tickets.filterTicketbyTitle(name);
     }
 
     public Set<Ticket> filterTicketByStatus(String status){
-        return tickets.stream()
-                .filter(ticket -> ticket.getStatus().toString().contains(status))
-                .collect(Collectors.toSet());
+        return tickets.filterTicketByStatus(status);
     }
 
     public Set<Ticket> filterTicketByPriority(String priority){
-        return tickets.stream()
-                .filter(ticket -> ticket.getPriority().toString().contains(priority))
-                .collect(Collectors.toSet());
+        return tickets.filterTicketByPriority(priority);
     }
 
     public Set<Ticket> filterTicketByService(String service){
-        return tickets.stream()
-                .filter(ticket -> ticket.getService().toString().contains(service))
-                .collect(Collectors.toSet());
+        return tickets.filterTicketByService(service);
     }
 
     public Set<Ticket> filterTicketByTechnician(String technician){
-        return tickets.stream()
-                .filter(ticket -> ticket.getName_technician().contains(technician))
-                .collect(Collectors.toSet());
+        return tickets.filterTicketByTechnician(technician);
     }
 
     public Set<Ticket> filterTicketByApplicant(String applicant){
-        return tickets.stream()
-                .filter(ticket -> ticket.getName_applicant().contains(applicant))
-                .collect(Collectors.toSet());
+        return tickets.filterTicketByApplicant(applicant);
     }
 
-    public Ticket findTicketById(String id){
-        return tickets.stream()
-                .filter(ticket -> ticket.getId().equals(id))
-                .findFirst().orElseThrow();
+    public void saveDatas() {
+        tickets.saveDatas();
     }
-
-    public Ticket findTicketByTitle(String title){
-        return tickets.stream()
-                .filter(ticket -> ticket.getTitle().equals(title))
-                .findFirst().orElseThrow();
-    }
-
 }
 
 
