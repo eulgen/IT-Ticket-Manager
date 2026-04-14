@@ -63,8 +63,8 @@ public class CSVTicketRepo implements TicketRepo {
                             ticket.getService().toString(),
                             ticket.getName_applicant(),
                             ticket.getName_technician(),
-                            ticket.getCreated_at().toString(),
-                            ticket.getUpdated_at().toString()})
+                            ticket.getFormattedDateTime(ticket.getCreated_at()),
+                            ticket.getFormattedDateTime(ticket.getUpdated_at())})
                     .forEach(writer::writeNext);
         } catch (IOException e) {
             e.printStackTrace();
@@ -98,8 +98,8 @@ public class CSVTicketRepo implements TicketRepo {
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
                     String name_technician = nextLine[7];
-                    LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
-                    LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
+                    LocalDateTime created_at = Ticket.parseStringToDate(nextLine[8]);
+                    LocalDateTime updated_at = Ticket.parseStringToDate(nextLine[9]);
 
                     Ticket ticket = new Ticket(id, title, description, status, priority, service, name_applicant, name_technician, created_at, updated_at);
                     tickets.add(ticket);
@@ -136,8 +136,8 @@ public class CSVTicketRepo implements TicketRepo {
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
                     String name_technician = nextLine[7];
-                    LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
-                    LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
+                    LocalDateTime created_at = Ticket.parseStringToDate(nextLine[8]);
+                    LocalDateTime updated_at = Ticket.parseStringToDate(nextLine[9]);
                     return new Ticket(id, title, description, status, priority, service, name_applicant, name_technician, created_at,updated_at);
                 }
             }
@@ -163,8 +163,8 @@ public class CSVTicketRepo implements TicketRepo {
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
                     String name_technician = nextLine[7];
-                    LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
-                    LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
+                    LocalDateTime created_at = Ticket.parseStringToDate(nextLine[8]);
+                    LocalDateTime updated_at = Ticket.parseStringToDate(nextLine[9]);
                     return new Ticket(id, title, description, status, priority, service, name_applicant, name_technician, created_at,updated_at);
                 }
             }
@@ -191,8 +191,8 @@ public class CSVTicketRepo implements TicketRepo {
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
                     String name_technician = nextLine[7];
-                    LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
-                    LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
+                    LocalDateTime created_at = Ticket.parseStringToDate(nextLine[8]);
+                    LocalDateTime updated_at = Ticket.parseStringToDate(nextLine[9]);
                     tickets.add(new Ticket(id, title, description, status_ticket, priority, service, name_applicant, name_technician, created_at,updated_at));
                 }
             }
@@ -218,8 +218,8 @@ public class CSVTicketRepo implements TicketRepo {
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
                     String name_technician = nextLine[7];
-                    LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
-                    LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
+                    LocalDateTime created_at = Ticket.parseStringToDate(nextLine[8]);
+                    LocalDateTime updated_at = Ticket.parseStringToDate(nextLine[9]);
                     tickets.add(new Ticket(id, title, description, status, Priority.valueOf(priority), service, name_applicant, name_technician, created_at,updated_at));
                 }
             }
@@ -245,8 +245,8 @@ public class CSVTicketRepo implements TicketRepo {
                     Priority priority = Priority.valueOf(nextLine[4]);
                     String name_applicant = nextLine[6];
                     String name_technician = nextLine[7];
-                    LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
-                    LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
+                    LocalDateTime created_at = Ticket.parseStringToDate(nextLine[8]);
+                    LocalDateTime updated_at = Ticket.parseStringToDate(nextLine[9]);
                     tickets.add(new Ticket(id, title, description, status, priority, Service.valueOf(service), name_applicant, name_technician, created_at,updated_at));
                 }
             }
@@ -273,8 +273,8 @@ public class CSVTicketRepo implements TicketRepo {
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
                     String technician_ticket = nextLine[7];
-                    LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
-                    LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
+                    LocalDateTime created_at = Ticket.parseStringToDate(nextLine[8]);
+                    LocalDateTime updated_at = Ticket.parseStringToDate(nextLine[9]);
                     tickets.add(new Ticket(id, title, description, status, priority, service, name_applicant, technician_ticket, created_at,updated_at));
                 }
             }
@@ -301,8 +301,8 @@ public class CSVTicketRepo implements TicketRepo {
                     Service service = Service.valueOf(nextLine[5]);
                     String applicant_ticket = nextLine[6];
                     String name_technician = nextLine[7];
-                    LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
-                    LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
+                    LocalDateTime created_at = Ticket.parseStringToDate(nextLine[8]);
+                    LocalDateTime updated_at = Ticket.parseStringToDate(nextLine[9]);
                     tickets.add(new Ticket(id, title, description, status, priority, service, applicant_ticket, name_technician, created_at,updated_at));
                 }
             }
@@ -329,8 +329,8 @@ public class CSVTicketRepo implements TicketRepo {
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
                     String name_technician = nextLine[7];
-                    LocalDateTime created_at = LocalDateTime.parse(nextLine[8]);
-                    LocalDateTime updated_at = LocalDateTime.parse(nextLine[9]);
+                    LocalDateTime created_at = Ticket.parseStringToDate(nextLine[8]);
+                    LocalDateTime updated_at = Ticket.parseStringToDate(nextLine[9]);
                     tickets.add(new Ticket(id, title, description, status, priority, service, name_applicant, name_technician, created_at,updated_at));
                 }
             }

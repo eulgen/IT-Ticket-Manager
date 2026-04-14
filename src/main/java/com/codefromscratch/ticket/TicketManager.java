@@ -67,7 +67,7 @@ public class TicketManager {
                 .map(ticket ->ticket.getId() + " - " + ticket.getTitle() + " - " + ticket.getDescription() + " - "
                         + ticket.getStatus() + " - " + ticket.getPriority() + " - " + ticket.getService()
                         + " - " + ticket.getName_applicant() + " - " + ticket.getName_technician()
-                        + " - " + ticket.getCreated_at() + " - " + ticket.getUpdated_at()
+                        + " - " + ticket.getFormattedDateTime(ticket.getCreated_at()) + " - " + ticket.getFormattedDateTime(ticket.getUpdated_at())
                 )
                 .collect(Collectors.joining("\n"));
     }

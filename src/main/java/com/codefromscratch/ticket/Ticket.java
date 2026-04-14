@@ -63,15 +63,15 @@ public class Ticket {
         return "\n-----\nTicket ID: "+this.id+"\nTitle: "+this.title+"\nDescription: "+this.description+
                 "\nStatus: "+this.status+"\nPriority: "+this.priority+"\nService: "+this.service+
                 "\nName Applicant: "+this.name_applicant+"\nName Technician: "+this.name_technician+
-                "\nCreated At: "+this.created_at+"\nUpdated At: "+this.updated_at;
+                "\nCreated At: "+getFormattedDateTime(this.created_at)+"\nUpdated At: "+getFormattedDateTime(this.updated_at);
     }
 
-    String getFormattedCreatedAt(LocalDateTime format_date){
+    String getFormattedDateTime(LocalDateTime format_date){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm");
         return format_date.format(formatter);
     }
 
-    public LocalDateTime parseStringToDate(String dateStr) {
+    public static LocalDateTime parseStringToDate(String dateStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm");
         return LocalDateTime.parse(dateStr, formatter);
     }
@@ -128,7 +128,7 @@ public class Ticket {
         System.out.println("                        Service: " + this.service);
         System.out.println("                        Name Applicant: " + this.name_applicant);
         System.out.println("                        Name Technician: " + this.name_technician);
-        System.out.println("                        Created At: " + this.created_at);
-        System.out.println("                        Updated At: " + this.updated_at);
+        System.out.println("                        Created At: " + getFormattedDateTime(this.created_at));
+        System.out.println("                        Updated At: " + getFormattedDateTime(this.updated_at));
     }
 }
