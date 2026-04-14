@@ -84,20 +84,20 @@ public class Ticket {
         this.name_technician = name_technician;
     }
 
-    public void changeStatus(Status status){
-        switch (status){
-            case OPEN:
-                this.status = Status.IN_PROGRESS;
-                break;
-            case IN_PROGRESS:
-                this.status = Status.RESOLVED;
-                break;
-            case RESOLVED:
-                this.status = Status.CLOSED;
-                break;
-            default:
-        }
-    }
+//    public void changeStatus(Status status){
+//        switch (status){
+//            case OPEN:
+//                this.status = Status.IN_PROGRESS;
+//                break;
+//            case IN_PROGRESS:
+//                this.status = Status.RESOLVED;
+//                break;
+//            case RESOLVED:
+//                this.status = Status.CLOSED;
+//                break;
+//            default:
+//        }
+//    }
 
     public void changeStatus(){
         switch (this.status){

@@ -21,6 +21,6 @@ public interface TicketRepo {
     void deleteTicket(String ticketId);
     void updateTicketByPriority(String id, String priority);
     void updateTicketByTechnician(String id, String technician);
-    void updateTicketByStatus(String id, String status);
+    void updateTicketByStatus(String id);
 
 }

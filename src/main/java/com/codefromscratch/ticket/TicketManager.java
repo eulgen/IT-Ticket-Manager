@@ -53,8 +53,8 @@ public class TicketManager {
         tickets.updateTicketByTechnician(id,technician);
     }
 
-    public void updateTicketByStatus(String id, String status){
-        tickets.updateTicketByStatus(id,status);
+    public void updateTicketByStatus(String id){
+        tickets.updateTicketByStatus(id);
     }
 
     public void deleteTicket(String ticketId){
