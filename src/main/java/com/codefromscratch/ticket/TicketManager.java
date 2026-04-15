@@ -2,6 +2,7 @@ package com.codefromscratch.ticket;
 
 import lombok.Getter;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -98,6 +99,51 @@ public class TicketManager {
 
     public void saveDatas() {
         tickets.saveDatas();
+    }
+
+    public int toTalTickets(){
+        return tickets.loadDatas().size();
+    }
+
+    public int countStatusTickets(String status){
+        return tickets.filterTicketByStatus(status).size();
+    }
+
+    public int countPriorityTickets(String priority){
+        return tickets.filterTicketByPriority(priority).size();
+    }
+
+    public int countServiceTickets(String service){
+        return tickets.filterTicketByService(service).size();
+    }
+
+    public int assignTechnicianTickets(String technician_name){
+        return tickets.filterTicketByTechnician(technician_name).size();
+    }
+
+    public int countApplicantTickets(String applicant_name){
+        return tickets.filterTicketByApplicant(applicant_name).size();
+    }
+
+    public int recentlyCreatedTickets(){
+        LocalDateTime threshold = LocalDateTime.now().minusDays(7);
+        return (int) tickets.loadDatas().stream()
+                .filter(ticket -> !ticket.getCreated_at().isBefore(threshold))
+                .count();
+    }
+
+    public int recentlyUpdatedTickets(){
+        LocalDateTime threshold = LocalDateTime.now().minusDays(7);
+        return (int) tickets.loadDatas().stream()
+                .filter(ticket -> !ticket.getUpdated_at().isBefore(threshold))
+                .count();
+    }
+
+    public Set<Ticket> filterTicketByPeriodTime(long period_day){
+        LocalDateTime threshold = LocalDateTime.now().minusDays(period_day);
+        return tickets.loadDatas().stream()
+                .filter(ticket -> !ticket.getCreated_at().isBefore(threshold))
+                .collect(Collectors.toSet());
     }
 }
 
