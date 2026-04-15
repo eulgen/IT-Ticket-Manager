@@ -8,12 +8,14 @@ A simple Java application for managing internal support tickets. The project is 
 - **Ticket lifecycle**: Track ticket status through `OPEN`, `IN_PROGRESS`, `RESOLVED`, and `CLOSED`.
 - **Ticket updates**: Update ticket priority, assigned technician, and status.
 - **Filtering and search**: Find or filter tickets by ID, title, status, priority, service, technician, or applicant.
+- **Time-based filtering**: Filter tickets created within a period defined by a number of days.
 - **Two persistence strategies**:
   - `TempTicketRepo`: stores tickets in memory with a `Set<Ticket>`.
   - `CSVTicketRepo`: persists tickets to `tickets.csv`.
 - **Console simulation**:
   - `Simulation` provides an interactive console menu
   - you can manually create, search, update, filter, save, list, and delete tickets
+  - you can also filter tickets by creation period using a number of days
   - the console output includes formatted ticket cards and lightweight terminal animations
 - **Automated tests**:
   - repository tests for the in-memory and CSV implementations
@@ -68,6 +70,7 @@ Running `Main` starts the interactive console simulation in `com.codefromscratch
 - search by ID or title
 - update priority, technician, and status
 - filter tickets by title, status, priority, service, technician, or applicant
+- filter tickets by creation period in days
 - save tickets and reload repository data
 - delete one ticket or clear all tickets
 
@@ -105,6 +108,7 @@ To persist tickets in a CSV file instead of memory, replace `TempTicketRepo` wit
 ## Implementation Notes
 
 - `TicketManager#createTicket(...)` normalizes text values to lowercase before saving.
+- `TicketManager#filterTicketByPeriodTime(long)` returns tickets created within the last `N` days.
 - `Ticket#changeStatus()` advances the workflow one step at a time:
   - `OPEN -> IN_PROGRESS`
   - `IN_PROGRESS -> RESOLVED`

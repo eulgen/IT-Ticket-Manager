@@ -251,4 +251,38 @@ class TicketManagerTest {
     void getTickets() {
         assertSame(ticketRepo, ticketManager.getTickets());
     }
+
+    @Test
+    void recentlyCreatedTickets() {
+        LocalDateTime now = LocalDateTime.now();
+        Set<Ticket> tickets = Set.of(
+                new Ticket("Tick-EG-111111", "recent ticket", "created recently", Status.OPEN, Priority.HIGH, Service.SUPPORT, "alice", "bob", now.minusDays(2), now.minusDays(2)),
+                new Ticket("Tick-EG-222222", "old ticket", "created before threshold", Status.OPEN, Priority.MEDIUM, Service.MANAGEMENT, "charles", "diane", now.minusDays(10), now.minusDays(1)),
+                new Ticket("Tick-EG-333333", "very recent ticket", "created today", Status.RESOLVED, Priority.LOW, Service.ACCOUNTING, "emma", "frank", now.minusHours(6), now.minusHours(2))
+        );
+        when(ticketRepo.loadDatas()).thenReturn(tickets);
+
+        int result = ticketManager.recentlyCreatedTickets();
+
+        assertEquals(2, result);
+        verify(ticketRepo).loadDatas();
+        verifyNoMoreInteractions(ticketRepo);
+    }
+
+    @Test
+    void recentlyUpdatedTickets() {
+        LocalDateTime now = LocalDateTime.now();
+        Set<Ticket> tickets = Set.of(
+                new Ticket("Tick-EG-111111", "recently updated", "updated recently", Status.OPEN, Priority.HIGH, Service.SUPPORT, "alice", "bob", now.minusDays(20), now.minusDays(3)),
+                new Ticket("Tick-EG-222222", "stale ticket", "updated before threshold", Status.OPEN, Priority.MEDIUM, Service.MANAGEMENT, "charles", "diane", now.minusDays(15), now.minusDays(9)),
+                new Ticket("Tick-EG-333333", "updated today", "fresh update", Status.RESOLVED, Priority.LOW, Service.ACCOUNTING, "emma", "frank", now.minusDays(1), now.minusMinutes(30))
+        );
+        when(ticketRepo.loadDatas()).thenReturn(tickets);
+
+        int result = ticketManager.recentlyUpdatedTickets();
+
+        assertEquals(2, result);
+        verify(ticketRepo).loadDatas();
+        verifyNoMoreInteractions(ticketRepo);
+    }
 }

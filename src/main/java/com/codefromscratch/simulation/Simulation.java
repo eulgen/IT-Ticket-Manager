@@ -9,9 +9,11 @@ import com.codefromscratch.ticket.Ticket;
 import com.codefromscratch.ticket.TicketManager;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class Simulation {
 
@@ -79,9 +81,10 @@ public final class Simulation {
                 case "7" -> updateTicketStatus();
                 case "8" -> deleteTicket();
                 case "9" -> filterTickets();
-                case "10" -> reloadTickets();
-                case "11" -> saveTickets();
-                case "12" -> deleteAllTickets();
+                case "10" -> showStatistics();
+                case "11" -> reloadTickets();
+                case "12" -> saveTickets();
+                case "13" -> deleteAllTickets();
                 case "0" -> running = exit();
                 default -> error("Unknown action. Try again.");
             }
@@ -99,13 +102,15 @@ public final class Simulation {
         System.out.println(BLUE + "7." + RESET + " Advance ticket status");
         System.out.println(BLUE + "8." + RESET + " Delete one ticket");
         System.out.println(BLUE + "9." + RESET + " Filter tickets");
-        System.out.println(BLUE + "10." + RESET + " Reload tickets");
-        System.out.println(BLUE + "11." + RESET + " Save tickets");
-        System.out.println(BLUE + "12." + RESET + " Delete all tickets");
+        System.out.println(BLUE + "10." + RESET + " Show statistics");
+        System.out.println(BLUE + "11." + RESET + " Reload tickets");
+        System.out.println(BLUE + "12." + RESET + " Save tickets");
+        System.out.println(BLUE + "13." + RESET + " Delete all tickets");
         System.out.println(BLUE + "0." + RESET + " Exit");
     }
 
     private void createTicket() {
+        clearScreen();
         section("Create ticket");
         try {
             String title = promptRequired("Title: ");
@@ -133,11 +138,13 @@ public final class Simulation {
     }
 
     private void listAllTickets() {
+        clearScreen();
         section("All tickets");
         printTickets(ticketManager.loadDatas());
     }
 
     private void findTicketById() {
+        clearScreen();
         section("Find by ID");
         String id = promptRequired("Ticket ID: ");
         try {
@@ -150,6 +157,7 @@ public final class Simulation {
     }
 
     private void findTicketByTitle() {
+        clearScreen();
         section("Find by title");
         String title = promptRequired("Title or title fragment: ");
         try {
@@ -162,6 +170,7 @@ public final class Simulation {
     }
 
     private void updateTicketPriority() {
+        clearScreen();
         section("Update priority");
         String id = promptRequired("Ticket ID: ");
         Priority priority = choosePriority();
@@ -176,6 +185,7 @@ public final class Simulation {
     }
 
     private void updateTicketTechnician() {
+        clearScreen();
         section("Update technician");
         String id = promptRequired("Ticket ID: ");
         String technician = promptRequired("New technician: ");
@@ -190,6 +200,7 @@ public final class Simulation {
     }
 
     private void updateTicketStatus() {
+        clearScreen();
         section("Advance status");
         String id = promptRequired("Ticket ID: ");
         try {
@@ -206,6 +217,7 @@ public final class Simulation {
     }
 
     private void deleteTicket() {
+        clearScreen();
         section("Delete ticket");
         String id = promptRequired("Ticket ID: ");
         try {
@@ -218,6 +230,7 @@ public final class Simulation {
     }
 
     private void filterTickets() {
+        clearScreen();
         section("Filter tickets");
         System.out.println("1. By title");
         System.out.println("2. By status");
@@ -225,8 +238,9 @@ public final class Simulation {
         System.out.println("4. By service");
         System.out.println("5. By technician");
         System.out.println("6. By applicant");
+        System.out.println("7. By creation period (days)");
 
-        String choice = prompt("Choose filter [1-6]: ");
+        String choice = prompt("Choose filter [1-7]: ");
         Set<Ticket> filteredTickets;
 
         try {
@@ -237,6 +251,7 @@ public final class Simulation {
                 case "4" -> filteredTickets = ticketManager.filterTicketByService(chooseService().name());
                 case "5" -> filteredTickets = ticketManager.filterTicketByTechnician(promptRequired("Technician: ").toLowerCase());
                 case "6" -> filteredTickets = ticketManager.filterTicketByApplicant(promptRequired("Applicant: ").toLowerCase());
+                case "7" -> filteredTickets = ticketManager.filterTicketByPeriodTime(promptPositiveLong("Number of days: "));
                 default -> {
                     error("Invalid filter choice.");
                     return;
@@ -249,12 +264,66 @@ public final class Simulation {
     }
 
     private void reloadTickets() {
+        clearScreen();
         section("Reload tickets");
         animate("Reloading data from repository", 2, 100);
         printTickets(ticketManager.loadDatas());
     }
 
+    private void showStatistics() {
+        clearScreen();
+        section("Statistics");
+        animate("Computing ticket metrics", 2, 100);
+
+        printStatLine("Total tickets", ticketManager.toTalTickets());
+        printStatLine("Recently created tickets", ticketManager.recentlyCreatedTickets());
+        printStatLine("Recently updated tickets", ticketManager.recentlyUpdatedTickets());
+
+        printSubSection("Status distribution");
+        Arrays.stream(Status.values())
+                .forEach(status -> printStatLine(status.name(), ticketManager.countStatusTickets(status.name())));
+
+        printSubSection("Priority distribution");
+        Arrays.stream(Priority.values())
+                .forEach(priority -> printStatLine(priority.name(), ticketManager.countPriorityTickets(priority.name())));
+
+        printSubSection("Service distribution");
+        Arrays.stream(Service.values())
+                .forEach(service -> printStatLine(service.name(), ticketManager.countServiceTickets(service.name())));
+
+        printSubSection("Assignment");
+        printStatLine("Unassigned tickets", ticketManager.assignTechnicianTickets("not assign"));
+
+        Set<String> technicians = ticketManager.loadDatas().stream()
+                .map(Ticket::getName_technician)
+                .filter(name -> name != null && !name.isBlank())
+                .collect(Collectors.toCollection(java.util.TreeSet::new));
+
+        if (technicians.isEmpty()) {
+            System.out.println("No technicians assigned yet.");
+        } else {
+            technicians.forEach(technician ->
+                    printStatLine("Technician " + technician, ticketManager.assignTechnicianTickets(technician))
+            );
+        }
+
+        printSubSection("Applicants");
+        Set<String> applicants = ticketManager.loadDatas().stream()
+                .map(Ticket::getName_applicant)
+                .filter(name -> name != null && !name.isBlank())
+                .collect(Collectors.toCollection(java.util.TreeSet::new));
+
+        if (applicants.isEmpty()) {
+            System.out.println("No applicants available.");
+        } else {
+            applicants.forEach(applicant ->
+                    printStatLine("Applicant " + applicant, ticketManager.countApplicantTickets(applicant))
+            );
+        }
+    }
+
     private void saveTickets() {
+        clearScreen();
         section("Save tickets");
         try {
             ticketManager.saveDatas();
@@ -266,6 +335,7 @@ public final class Simulation {
     }
 
     private void deleteAllTickets() {
+        clearScreen();
         section("Delete all tickets");
         String confirm = prompt("Type DELETE to confirm: ");
         if (!"DELETE".equals(confirm)) {
@@ -375,6 +445,20 @@ public final class Simulation {
         return prompt(label);
     }
 
+    private long promptPositiveLong(String label) {
+        while (true) {
+            String value = prompt(label);
+            try {
+                long parsedValue = Long.parseLong(value);
+                if (parsedValue >= 0) {
+                    return parsedValue;
+                }
+            } catch (NumberFormatException ignored) {
+            }
+            error("Please enter a valid number of days.");
+        }
+    }
+
     private void printBanner() {
         System.out.println(CYAN);
         System.out.println("==============================================================");
@@ -389,6 +473,15 @@ public final class Simulation {
         System.out.println(YELLOW + "--------------------------------------------------------------");
         System.out.println(title.toUpperCase());
         System.out.println("--------------------------------------------------------------" + RESET);
+    }
+
+    private void printSubSection(String title) {
+        System.out.println();
+        System.out.println(CYAN + title + RESET);
+    }
+
+    private void printStatLine(String label, int value) {
+        System.out.printf("%s%-32s%s : %s%d%s%n", BLUE, label, RESET, GREEN, value, RESET);
     }
 
     private void animate(String message, int steps, long delayMs) {
@@ -442,7 +535,7 @@ public final class Simulation {
     }
 
     private void clearScreen() {
-        System.out.print("\033[H\033[2J");
+        System.out.print("\033[H\033[2J\033[3J");
         System.out.flush();
     }
 }
