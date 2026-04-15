@@ -52,3 +52,7 @@ System.out.println(admin.listAllTickets());
 ```
 
 ## Technologies Used
+
+- **Java 23**
+- **Maven**
+- **Lombok** (for reducing boilerplate code)

@@ -1,0 +1,3 @@
+"id","title","description","status","priority","service","name_applicant","name_technician","created_at","updated_at"
+"Tick-EG-fdd1f1","pas de connexion internet","la connexion internet ne passe pas depuis hier soir","OPEN","HIGH","MANAGEMENT","takam jules","onana alex","14/04/2026 à 04:31","14/04/2026 à 04:31"
+"Tick-EG-695538","imprimante ne fonctionne pas","depuis lundi dernier l'imprimante ne fonctionne pas","OPEN","MEDIUM","LOGISTICS","pamela","john doe","14/04/2026 à 04:31","14/04/2026 à 04:31"

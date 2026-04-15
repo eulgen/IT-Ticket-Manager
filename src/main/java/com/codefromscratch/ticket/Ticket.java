@@ -1,11 +1,11 @@
 package com.codefromscratch.ticket;
 
-import com.codefromscratch.employee.Service;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.security.InvalidParameterException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 @Getter
@@ -19,8 +19,8 @@ public class Ticket {
     private final Service service;
     private final String name_applicant;
     private String name_technician = "NOT ASSIGN";
-    private final LocalDateTime created_at;
-    private final LocalDateTime updated_at;
+    private LocalDateTime created_at;
+    private LocalDateTime updated_at;
 
     public Ticket(String title, String description, Status status, Priority priority, Service service, String name_applicant, String name_technician) {
         this.id = generateId();
@@ -42,8 +42,38 @@ public class Ticket {
         this.updated_at = LocalDateTime.now();
     }
 
+    public Ticket(String id,String title, String description, Status status, Priority priority, Service service, String name_applicant,String name_technician,LocalDateTime created_at, LocalDateTime updated_at) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.status = status;
+        this.priority = priority;
+        this.service = service;
+        this.name_applicant = name_applicant;
+        this.name_technician = name_technician;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+    }
+
     public Ticket(String title, String description, Status status, Priority priority, Service service, String name_applicant) {
         this(title, description, status, priority, service, name_applicant, "NOT ASSIGN");
+    }
+
+    public String toString(){
+        return "\n-----\nTicket ID: "+this.id+"\nTitle: "+this.title+"\nDescription: "+this.description+
+                "\nStatus: "+this.status+"\nPriority: "+this.priority+"\nService: "+this.service+
+                "\nName Applicant: "+this.name_applicant+"\nName Technician: "+this.name_technician+
+                "\nCreated At: "+getFormattedDateTime(this.created_at)+"\nUpdated At: "+getFormattedDateTime(this.updated_at);
+    }
+
+    String getFormattedDateTime(LocalDateTime format_date){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm");
+        return format_date.format(formatter);
+    }
+
+    public static LocalDateTime parseStringToDate(String dateStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm");
+        return LocalDateTime.parse(dateStr, formatter);
     }
 
     public String generateId() {
@@ -54,20 +84,20 @@ public class Ticket {
         this.name_technician = name_technician;
     }
 
-    public void changeStatus(Status status){
-        switch (status){
-            case OPEN:
-                this.status = Status.IN_PROGRESS;
-                break;
-            case IN_PROGRESS:
-                this.status = Status.RESOLVED;
-                break;
-            case RESOLVED:
-                this.status = Status.CLOSED;
-                break;
-            default:
-        }
-    }
+//    public void changeStatus(Status status){
+//        switch (status){
+//            case OPEN:
+//                this.status = Status.IN_PROGRESS;
+//                break;
+//            case IN_PROGRESS:
+//                this.status = Status.RESOLVED;
+//                break;
+//            case RESOLVED:
+//                this.status = Status.CLOSED;
+//                break;
+//            default:
+//        }
+//    }
 
     public void changeStatus(){
         switch (this.status){
@@ -98,7 +128,7 @@ public class Ticket {
         System.out.println("                        Service: " + this.service);
         System.out.println("                        Name Applicant: " + this.name_applicant);
         System.out.println("                        Name Technician: " + this.name_technician);
-        System.out.println("                        Created At: " + this.created_at);
-        System.out.println("                        Updated At: " + this.updated_at);
+        System.out.println("                        Created At: " + getFormattedDateTime(this.created_at));
+        System.out.println("                        Updated At: " + getFormattedDateTime(this.updated_at));
     }
 }

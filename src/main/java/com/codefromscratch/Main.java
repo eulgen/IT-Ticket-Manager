@@ -1,22 +1,22 @@
 package com.codefromscratch;
 
-import com.codefromscratch.employee.Administrator;
-import com.codefromscratch.ticket.Priority;
-import com.codefromscratch.employee.Service;
-import com.codefromscratch.ticket.Status;
-import com.codefromscratch.ticket.Ticket;
+import com.codefromscratch.ticket.*;
+
+import java.util.Set;
 
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-
-        Administrator admin = new Administrator("John Doe");
-        admin.createTicket("Imprimante defaillante","L'imprimante ne fonctionne plus",Priority.HIGH,Service.HR,"John Doe",null);
-        admin.createTicket("Ordinateur defaillant","L'ordinateur ne fonctionne plus",Priority.MEDIUM,Service.ACCOUNTING,"Jane Doe","Franck Gerard");
-        admin.createTicket("Probleme de connexion","Impossible de se connecter au serveur",Priority.LOW,Service.LOGISTICS,"Alice Smith","Martin Luck");
-        System.out.println(admin.listAllTickets());
+//        TicketRepo ticketRepo = new TempTicketRepo();
+//        TicketManager ticketManager = new TicketManager(ticketRepo);
+//        ticketManager.createTicket("PC hors jeu", "Le PC ne fonctionne plus", Priority.HIGH, Service.MANAGEMENT, "Lolita", "John Doe");
+//        ticketManager.createTicket("Imprimante ne fonctionne pas","Depuis lundi dernier l'imprimante ne fonctionne pas", Priority.MEDIUM, Service.LOGISTICS,"Pamela","John Doe");
+//        ticketManager.createTicket("Problème réseau","Le réseau ne fonctionne pas depuis hier", Priority.HIGH, Service.MANAGEMENT,"Alicia","John Doe");
+        //          Set<Ticket> tickets = ticketManager.filterTicketByService("MANAGEMENT");
+//        System.out.println(tickets.toString());
+//        System.out.println(ticketRepo.loadDatas().toString());
+//        System.out.println(ticketManager.listAllTickets());
+//        ticketManager.deleteAll();
     }
 }
