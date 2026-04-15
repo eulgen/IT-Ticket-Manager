@@ -1,5 +1,6 @@
 package com.codefromscratch.ticket;
 
+import lombok.Getter;
 import lombok.NonNull;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Getter
 public class TempTicketRepo implements TicketRepo {
 
     private final Set<Ticket> tickets;
@@ -50,7 +52,7 @@ public class TempTicketRepo implements TicketRepo {
     @Override
     public Ticket findTicketByTitle(String title) {
         return tickets.stream()
-                .filter(ticket -> ticket.getTitle().contains(title.toLowerCase()))
+                .filter(ticket -> ticket.getTitle().contains(title))
                 .findFirst().orElseThrow();
     }
 
@@ -78,22 +80,22 @@ public class TempTicketRepo implements TicketRepo {
     @Override
     public Set<Ticket> filterTicketByTechnician(String technician) {
         return tickets.stream()
-                .filter(ticket -> ticket.getName_technician().contains(technician.toLowerCase()))
+                .filter(ticket -> ticket.getName_technician().contains(technician))
                 .collect(Collectors.toSet());
     }
 
     @Override
     public Set<Ticket> filterTicketByApplicant(String applicant) {
         return tickets.stream()
-                .filter(ticket -> ticket.getName_applicant().contains(applicant.toLowerCase()))
+                .filter(ticket -> ticket.getName_applicant().contains(applicant))
                 .collect(Collectors.toSet());
     }
 
     @Override
     public Set<Ticket> filterTicketbyTitle(String title) {
-        return Collections.singleton(tickets.stream()
-                .filter(ticket -> ticket.getTitle().equals(title.toLowerCase()))
-                .findFirst().orElseThrow());
+        return tickets.stream()
+                .filter(ticket -> ticket.getTitle().contains(title))
+                .collect(Collectors.toSet());
     }
 
     @Override
@@ -114,16 +116,16 @@ public class TempTicketRepo implements TicketRepo {
     @Override
     public void updateTicketByTechnician(String id, String technician) {
         Ticket findedTicket = findTicketById(id);
-        findedTicket.setName_technician(technician.toLowerCase());
+        findedTicket.setName_technician(technician);
         findedTicket.setUpdated_at(LocalDateTime.now());
         deleteTicket(id);
         tickets.add(findedTicket);
     }
 
     @Override
-    public void updateTicketByStatus(String id, String status) {
+    public void updateTicketByStatus(String id) {
         Ticket findedTicket = findTicketById(id);
-        findedTicket.changeStatus(Status.valueOf(status));
+        findedTicket.changeStatus();
         findedTicket.setUpdated_at(LocalDateTime.now());
         deleteTicket(id);
         tickets.add(findedTicket);

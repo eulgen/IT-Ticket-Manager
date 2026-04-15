@@ -3,6 +3,7 @@ package com.codefromscratch.ticket;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvValidationException;
+import lombok.Getter;
 
 import java.io.File;
 import java.io.FileReader;
@@ -12,13 +13,21 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
 public class CSVTicketRepo implements TicketRepo {
 
     private static final String TICKET_FILE = "tickets.csv";
 
-    public final Set<Ticket> mytickets;
+    private final Set<Ticket> mytickets;
 
     public CSVTicketRepo() {this.mytickets = new HashSet<>();}
+
+    public void addToMyTickets(Ticket ticket) {
+        if (ticket == null) {
+            throw new IllegalArgumentException("ticket cannot be null");
+        }
+        mytickets.add(ticket);
+    }
 
     public boolean fileExist(){
         return new File(TICKET_FILE).exists();
@@ -27,6 +36,7 @@ public class CSVTicketRepo implements TicketRepo {
     public void saveData(Ticket ticket) {
         Set<Ticket> tickets = loadDatas();
         tickets.add(ticket);
+        mytickets.addAll(tickets);
         deleteDatas();
         saveDatas(tickets);
     }
@@ -43,7 +53,7 @@ public class CSVTicketRepo implements TicketRepo {
             e.printStackTrace();
         }
         try (CSVWriter writer = new CSVWriter(new FileWriter(TICKET_FILE))) {
-
+            mytickets.addAll(tickets);
             writer.writeNext(new String[]{"id",
                     "title",
                     "description",
@@ -56,13 +66,13 @@ public class CSVTicketRepo implements TicketRepo {
                     "updated_at"});
             tickets.stream()
                     .map(ticket -> new String[]{ticket.getId(),
-                            ticket.getTitle(),
-                            ticket.getDescription(),
+                            ticket.getTitle().toLowerCase(),
+                            ticket.getDescription().toLowerCase(),
                             ticket.getStatus().toString(),
                             ticket.getPriority().toString(),
                             ticket.getService().toString(),
-                            ticket.getName_applicant(),
-                            ticket.getName_technician(),
+                            ticket.getName_applicant().toLowerCase(),
+                            ticket.getName_technician().toLowerCase(),
                             ticket.getFormattedDateTime(ticket.getCreated_at()),
                             ticket.getFormattedDateTime(ticket.getUpdated_at())})
                     .forEach(writer::writeNext);
@@ -131,8 +141,8 @@ public class CSVTicketRepo implements TicketRepo {
                 if (nextLine[0].equals(id)) {
                     String title = nextLine[1];
                     String description = nextLine[2];
-                    Priority priority = Priority.valueOf(nextLine[3]);
-                    Status status = Status.valueOf(nextLine[4]);
+                    Status status = Status.valueOf(nextLine[3]);
+                    Priority priority = Priority.valueOf(nextLine[4]);
                     Service service = Service.valueOf(nextLine[5]);
                     String name_applicant = nextLine[6];
                     String name_technician = nextLine[7];
@@ -150,7 +160,9 @@ public class CSVTicketRepo implements TicketRepo {
 
     @Override
     public Ticket findTicketByTitle(String title) {
-        if(!fileExist()){ return null;}
+        if(!fileExist()){
+            return null;
+        }
         try(CSVReader reader = new CSVReader(new FileReader(TICKET_FILE))){
             String[] nextLine;
             reader.readNext();
@@ -171,6 +183,7 @@ public class CSVTicketRepo implements TicketRepo {
         }catch (IOException | CsvValidationException e){
             e.printStackTrace();
         }
+        System.out.println("Dans le next\n");
         return null;
     }
 
@@ -377,13 +390,13 @@ public class CSVTicketRepo implements TicketRepo {
     }
 
     @Override
-    public void updateTicketByStatus(String id, String status) {
+    public void updateTicketByStatus(String id) {
         Set<Ticket> tickets = loadDatas();
         tickets.stream()
                 .filter(ticket -> ticket.getId().equals(id))
                 .findFirst()
                 .ifPresent(ticket -> {
-                    ticket.changeStatus(Status.valueOf(status));
+                    ticket.changeStatus();
                     ticket.setUpdated_at(LocalDateTime.now());
                 });
         saveDatas(tickets);
