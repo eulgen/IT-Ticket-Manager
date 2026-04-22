@@ -66,7 +66,7 @@ public class Ticket {
                 "\nCreated At: "+getFormattedDateTime(this.created_at)+"\nUpdated At: "+getFormattedDateTime(this.updated_at);
     }
 
-    String getFormattedDateTime(LocalDateTime format_date){
+    public String getFormattedDateTime(LocalDateTime format_date){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy à HH:mm");
         return format_date.format(formatter);
     }
@@ -83,21 +83,6 @@ public class Ticket {
     public void assignTechnician(String name_technician){
         this.name_technician = name_technician;
     }
-
-//    public void changeStatus(Status status){
-//        switch (status){
-//            case OPEN:
-//                this.status = Status.IN_PROGRESS;
-//                break;
-//            case IN_PROGRESS:
-//                this.status = Status.RESOLVED;
-//                break;
-//            case RESOLVED:
-//                this.status = Status.CLOSED;
-//                break;
-//            default:
-//        }
-//    }
 
     public void changeStatus(){
         switch (this.status){

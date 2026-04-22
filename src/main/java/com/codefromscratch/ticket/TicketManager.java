@@ -1,5 +1,7 @@
 package com.codefromscratch.ticket;
 
+import com.codefromscratch.inmemory.TempTicketRepo;
+import com.codefromscratch.inmemory.TicketRepo;
 import lombok.Getter;
 
 import java.time.LocalDateTime;

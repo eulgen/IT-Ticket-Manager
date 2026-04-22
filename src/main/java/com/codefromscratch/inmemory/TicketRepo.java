@@ -1,6 +1,7 @@
-package com.codefromscratch.ticket;
+package com.codefromscratch.inmemory;
 
-import java.util.Optional;
+import com.codefromscratch.ticket.Ticket;
+
 import java.util.Set;
 
 public interface TicketRepo {

@@ -1,16 +1,17 @@
 package com.codefromscratch.simulation;
 
-import com.codefromscratch.ticket.CSVTicketRepo;
+import com.codefromscratch.inmemory.CSVTicketRepo;
 import com.codefromscratch.ticket.Priority;
 import com.codefromscratch.ticket.Service;
 import com.codefromscratch.ticket.Status;
-import com.codefromscratch.ticket.TempTicketRepo;
+import com.codefromscratch.inmemory.TempTicketRepo;
 import com.codefromscratch.ticket.Ticket;
 import com.codefromscratch.ticket.TicketManager;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -26,44 +27,27 @@ public final class Simulation {
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
 
     private final Scanner scanner;
+    private final TicketManager bufferTicketManager;
+    private final TicketManager csvTicketManager;
     private TicketManager ticketManager;
 
     public Simulation() {
         this.scanner = new Scanner(System.in);
+        this.bufferTicketManager = new TicketManager(new TempTicketRepo());
+        this.csvTicketManager = new TicketManager(new CSVTicketRepo());
+        this.ticketManager = bufferTicketManager;
     }
 
     public void run() {
         clearScreen();
         printBanner();
         bootAnimation();
-        chooseRepository();
         menuLoop();
     }
 
     private void bootAnimation() {
         animate("Loading console workspace", 3, 120);
         animate("Loading ticket manager services", 3, 120);
-    }
-
-    private void chooseRepository() {
-        section("Repository selection");
-        System.out.println("1. In-memory repository");
-        System.out.println("2. CSV repository");
-
-        while (ticketManager == null) {
-            String choice = prompt("Choose repository [1-2]: ");
-            switch (choice) {
-                case "1" -> {
-                    ticketManager = new TicketManager(new TempTicketRepo());
-                    success("In-memory repository selected.");
-                }
-                case "2" -> {
-                    ticketManager = new TicketManager(new CSVTicketRepo());
-                    success("CSV repository selected.");
-                }
-                default -> error("Invalid choice. Please enter 1 or 2.");
-            }
-        }
     }
 
     private void menuLoop() {
@@ -82,9 +66,11 @@ public final class Simulation {
                 case "8" -> deleteTicket();
                 case "9" -> filterTickets();
                 case "10" -> showStatistics();
-                case "11" -> reloadTickets();
-                case "12" -> saveTickets();
-                case "13" -> deleteAllTickets();
+                case "11" -> loadTicketsFromCsv();
+                case "12" -> loadTicketsFromMemory();
+                case "13" -> saveTicketsToCsv();
+                case "14" -> saveTicketsToMemory();
+                case "15" -> deleteAllTickets();
                 case "0" -> running = exit();
                 default -> error("Unknown action. Try again.");
             }
@@ -103,9 +89,11 @@ public final class Simulation {
         System.out.println(BLUE + "8." + RESET + " Delete one ticket");
         System.out.println(BLUE + "9." + RESET + " Filter tickets");
         System.out.println(BLUE + "10." + RESET + " Show statistics");
-        System.out.println(BLUE + "11." + RESET + " Reload tickets");
-        System.out.println(BLUE + "12." + RESET + " Save tickets");
-        System.out.println(BLUE + "13." + RESET + " Delete all tickets");
+        System.out.println(BLUE + "11." + RESET + " Load tickets from CSV");
+        System.out.println(BLUE + "12." + RESET + " Load tickets from memory buffer");
+        System.out.println(BLUE + "13." + RESET + " Save tickets to CSV");
+        System.out.println(BLUE + "14." + RESET + " Save tickets to memory buffer");
+        System.out.println(BLUE + "15." + RESET + " Delete all tickets");
         System.out.println(BLUE + "0." + RESET + " Exit");
     }
 
@@ -263,10 +251,19 @@ public final class Simulation {
         }
     }
 
-    private void reloadTickets() {
+    private void loadTicketsFromCsv() {
         clearScreen();
-        section("Reload tickets");
-        animate("Reloading data from repository", 2, 100);
+        section("Load tickets from CSV");
+        ticketManager = csvTicketManager;
+        animate("Loading tickets from CSV", 2, 100);
+        printTickets(ticketManager.loadDatas());
+    }
+
+    private void loadTicketsFromMemory() {
+        clearScreen();
+        section("Load tickets from memory buffer");
+        ticketManager = bufferTicketManager;
+        animate("Loading tickets from memory buffer", 2, 100);
         printTickets(ticketManager.loadDatas());
     }
 
@@ -322,29 +319,64 @@ public final class Simulation {
         }
     }
 
-    private void saveTickets() {
+    private void saveTicketsToCsv() {
         clearScreen();
-        section("Save tickets");
+        section("Save tickets to CSV");
         try {
-            ticketManager.saveDatas();
-            animate("Saving tickets", 2, 100);
-            success("Save operation completed.");
+            syncTickets(ticketManager, csvTicketManager);
+            animate("Saving tickets to CSV", 2, 100);
+            success("Tickets saved to CSV.");
         } catch (RuntimeException e) {
-            error("Save operation failed.");
+            error("Save to CSV failed.");
+        }
+    }
+
+    private void saveTicketsToMemory() {
+        clearScreen();
+        section("Save tickets to memory buffer");
+        try {
+            syncTickets(ticketManager, bufferTicketManager);
+            animate("Saving tickets to memory buffer", 2, 100);
+            success("Tickets saved to memory buffer.");
+        } catch (RuntimeException e) {
+            error("Save to memory buffer failed.");
         }
     }
 
     private void deleteAllTickets() {
         clearScreen();
         section("Delete all tickets");
+        System.out.println("1. Delete all tickets from memory buffer");
+        System.out.println("2. Delete all tickets from CSV");
+
+        String targetChoice = prompt("Choose delete target [1-2]: ");
+        TicketManager targetManager;
+        String targetLabel;
+
+        switch (targetChoice) {
+            case "1" -> {
+                targetManager = bufferTicketManager;
+                targetLabel = "memory buffer";
+            }
+            case "2" -> {
+                targetManager = csvTicketManager;
+                targetLabel = "CSV";
+            }
+            default -> {
+                error("Invalid delete target.");
+                return;
+            }
+        }
+
         String confirm = prompt("Type DELETE to confirm: ");
         if (!"DELETE".equals(confirm)) {
             error("Operation cancelled.");
             return;
         }
-        ticketManager.deleteAll();
+
+        targetManager.deleteAll();
         animate("Deleting all tickets", 2, 100);
-        success("All tickets deleted.");
+        success("All tickets deleted from " + targetLabel + ".");
     }
 
     private boolean exit() {
@@ -499,6 +531,12 @@ public final class Simulation {
 
     private void error(String message) {
         System.out.println(RED + message + RESET);
+    }
+
+    private void syncTickets(TicketManager sourceManager, TicketManager targetManager) {
+        Set<Ticket> ticketsToCopy = new HashSet<>(sourceManager.loadDatas());
+        targetManager.deleteAll();
+        targetManager.saveDatas(ticketsToCopy);
     }
 
     private void printTickets(Set<Ticket> tickets) {

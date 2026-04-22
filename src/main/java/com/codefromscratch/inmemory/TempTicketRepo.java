@@ -1,12 +1,12 @@
-package com.codefromscratch.ticket;
+package com.codefromscratch.inmemory;
 
+import com.codefromscratch.ticket.Priority;
+import com.codefromscratch.ticket.Ticket;
 import lombok.Getter;
 import lombok.NonNull;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
